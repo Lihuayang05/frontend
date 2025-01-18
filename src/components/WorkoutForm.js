@@ -24,15 +24,23 @@ const WorkoutForm = () => {
         }
       })
 
+      // Check if the response is valid JSON
+      const responseText = await response.text()
+
       if (!response.ok) {
-        const errorJson = await response.json()
-        setError(errorJson.error)
-        setEmptyFields(errorJson.emptyFields)
+        try {
+          const errorJson = JSON.parse(responseText)
+          setError(errorJson.error)
+          setEmptyFields(errorJson.emptyFields)
+        } catch (err) {
+          // Handle case where the error message is not valid JSON
+          setError('An error occurred. Please try again.')
+        }
         return
       }
 
       // Handle valid response
-      const json = await response.json()
+      const json = JSON.parse(responseText)
       setEmptyFields([])
       setError(null)
       setTitle('')
