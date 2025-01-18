@@ -82,13 +82,6 @@ header a:hover {
   box-shadow: 0 4px 12px var(--shadow);
   transition: transform 0.2s ease, box-shadow 0.3s ease;
 }
-/* Style for strikethrough when completed */
-.workout-details.completed {
-  text-decoration: line-through;
-  color: #aaa; /* You can change the color to something more subtle */
-  margin-top: 20px; /* Adds a margin when completed to push the card down */
-  transition: margin-top 0.3s ease; /* Smooth transition */
-}
 
 .workout-details {
   transition: margin-top 0.3s ease; /* Ensure smooth transition on click */
