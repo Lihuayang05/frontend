@@ -20,33 +20,30 @@ const WorkoutForm = () => {
         method: 'POST',
         body: JSON.stringify(workout),
         headers: {
-          'Content-Type': 'application/json',
-        },
+          'Content-Type': 'application/json'
+        }
       })
 
-      // Check if response is okay (status 2xx)
       if (!response.ok) {
-        const errorData = await response.json()
-        setError(errorData.error || 'An error occurred')
-        setEmptyFields(errorData.emptyFields || [])
+        const errorJson = await response.json()
+        setError(errorJson.error)
+        setEmptyFields(errorJson.emptyFields)
         return
       }
 
-      // If response is successful, parse the JSON
+      // Handle valid response
       const json = await response.json()
-
-      // Clear the form fields and reset state
       setEmptyFields([])
       setError(null)
       setTitle('')
       setLoad('')
       setReps('')
       dispatch({ type: 'CREATE_WORKOUT', payload: json })
-
-    } catch (error) {
-      // Handle any fetch or network errors
-      setError('An error occurred. Please try again later.')
-      console.error('Error:', error)
+      
+    } catch (err) {
+      // This will catch fetch errors (e.g., network errors)
+      console.error('Error during the fetch operation:', err)
+      setError('An unexpected error occurred. Please try again.')
     }
   }
 
@@ -55,25 +52,25 @@ const WorkoutForm = () => {
       <h3>Add a New Workout</h3>
 
       <label>Exercise Title:</label>
-      <input
-        type="text"
-        onChange={(e) => setTitle(e.target.value)}
+      <input 
+        type="text" 
+        onChange={(e) => setTitle(e.target.value)} 
         value={title}
         className={emptyFields.includes('title') ? 'error' : ''}
       />
 
       <label>Load (in kg):</label>
-      <input
-        type="number"
-        onChange={(e) => setLoad(e.target.value)}
+      <input 
+        type="number" 
+        onChange={(e) => setLoad(e.target.value)} 
         value={load}
         className={emptyFields.includes('load') ? 'error' : ''}
       />
 
       <label>Number of Reps:</label>
-      <input
-        type="number"
-        onChange={(e) => setReps(e.target.value)}
+      <input 
+        type="number" 
+        onChange={(e) => setReps(e.target.value)} 
         value={reps}
         className={emptyFields.includes('reps') ? 'error' : ''}
       />
