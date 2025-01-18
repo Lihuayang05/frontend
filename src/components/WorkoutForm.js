@@ -24,29 +24,33 @@ const WorkoutForm = () => {
         }
       })
 
-      // Check if the response is valid JSON
+      // Check if response is not empty and if it's valid JSON
       const responseText = await response.text()
 
       if (!response.ok) {
         try {
-          const errorJson = JSON.parse(responseText)
-          setError(errorJson.error)
-          setEmptyFields(errorJson.emptyFields)
+          // Check if responseText is not empty before trying to parse it as JSON
+          const errorJson = responseText ? JSON.parse(responseText) : {}
+          setError(errorJson.error || 'An error occurred. Please try again.')
+          setEmptyFields(errorJson.emptyFields || [])
         } catch (err) {
-          // Handle case where the error message is not valid JSON
-          setError('An error occurred. Please try again.')
+          setError('An error occurred. The server did not return a valid response.')
         }
         return
       }
 
       // Handle valid response
-      const json = JSON.parse(responseText)
-      setEmptyFields([])
-      setError(null)
-      setTitle('')
-      setLoad('')
-      setReps('')
-      dispatch({ type: 'CREATE_WORKOUT', payload: json })
+      try {
+        const json = responseText ? JSON.parse(responseText) : {}
+        setEmptyFields([])
+        setError(null)
+        setTitle('')
+        setLoad('')
+        setReps('')
+        dispatch({ type: 'CREATE_WORKOUT', payload: json })
+      } catch (err) {
+        setError('Failed to parse response. Please try again.')
+      }
       
     } catch (err) {
       // This will catch fetch errors (e.g., network errors)
