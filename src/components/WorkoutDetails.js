@@ -11,15 +11,17 @@ const WorkoutDetails = ({ workout }) => {
     reps: workout.reps,
   });
 
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || '';
+
   // DELETE function
   const handleClick = async () => {
     try {
-      const response = await fetch(`/api/workouts/${workout._id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/workouts/${workout._id}`, {
         method: 'DELETE',
       });
-      const json = await response.json();
 
       if (response.ok) {
+        const json = await response.json();
         dispatch({ type: 'DELETE_WORKOUT', payload: json });
       } else {
         console.error('Failed to delete workout:', response.statusText);
@@ -31,11 +33,6 @@ const WorkoutDetails = ({ workout }) => {
 
   // Toggle edit mode
   const handleEditToggle = () => {
-    setEditedWorkout({
-      title: workout.title,
-      load: workout.load,
-      reps: workout.reps,
-    });
     setIsEditing(!isEditing);
   };
 
@@ -48,7 +45,7 @@ const WorkoutDetails = ({ workout }) => {
   // SAVE function for editing
   const handleSave = async () => {
     try {
-      const response = await fetch(`/api/workouts/${workout._id}`, {
+      const response = await fetch(`${API_BASE_URL}/api/workouts/${workout._id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -123,10 +120,18 @@ const WorkoutDetails = ({ workout }) => {
           <p>
             {formatDistanceToNow(new Date(workout.createdAt), { addSuffix: true })}
           </p>
-          <span className="material-symbols-outlined" onClick={handleClick}>
+          <span
+            className="material-symbols-outlined"
+            onClick={handleClick}
+            aria-label="Delete workout"
+          >
             delete
           </span>
-          <span className="material-symbols-outlined edit-button" onClick={handleEditToggle}>
+          <span
+            className="material-symbols-outlined edit-button"
+            onClick={handleEditToggle}
+            aria-label="Edit workout"
+          >
             edit
           </span>
         </>
