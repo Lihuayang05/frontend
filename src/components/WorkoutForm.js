@@ -13,54 +13,34 @@ const WorkoutForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    const workout = { title, load, reps }
-
-    try {
-      // Make sure the API URL is correct and not undefined
-      const apiUrl = process.env.REACT_APP_API_URL
-      if (!apiUrl) {
-        setError('API URL is not defined.')
-        return
+    const workout = {title, load, reps}
+    
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/workouts`, {
+      method: 'POST',
+      body: JSON.stringify(workout),
+      headers: {
+        'Content-Type': 'application/json'
       }
+    })
+    const json = await response.json()
 
-      const response = await fetch(`${apiUrl}/api/workouts`, {
-        method: 'POST',
-        body: JSON.stringify(workout),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
-
-      const responseText = await response.text() // Get raw response as text
-
-      if (!response.ok) {
-        // If the response is not OK (404 or 500), handle it here
-        setError(`Error: ${responseText || 'An unexpected error occurred.'}`)
-        setEmptyFields([])
-        return
-      }
-
-      // Handle valid response
-      try {
-        const json = JSON.parse(responseText)
-        setEmptyFields([])
-        setError(null)
-        setTitle('')
-        setLoad('')
-        setReps('')
-        dispatch({ type: 'CREATE_WORKOUT', payload: json })
-      } catch (err) {
-        setError('Failed to parse response. The server might have sent an unexpected format.')
-      }
-
-    } catch (err) {
-      console.error('Error during the fetch operation:', err)
-      setError('An unexpected error occurred. Please try again.')
+    if (!response.ok) {
+      setError(json.error)
+      setEmptyFields(json.emptyFields)
     }
+    if (response.ok) {
+      setEmptyFields([])
+      setError(null)
+      setTitle('')
+      setLoad('')
+      setReps('')
+      dispatch({type: 'CREATE_WORKOUT', payload: json})
+    }
+
   }
 
   return (
-    <form className="create" onSubmit={handleSubmit}>
+    <form className="create" onSubmit={handleSubmit}> 
       <h3>Add a New Workout</h3>
 
       <label>Exercise Title:</label>
