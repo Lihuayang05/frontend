@@ -84,7 +84,7 @@ header a:hover {
 }
 
 .workout-details {
-  transition: margin-top 0.3s ease; /* Ensure smooth transition on click */
+  transition: margin-top 0.3s ease; 
 }
 
 .workout-details:hover {
